@@ -16,7 +16,9 @@ LIB_MAJOR	:= $(LIB_NAME).$(MAJOR_VERSION)
 LIB_MAJ_MIN	:= $(LIB_NAME).$(MAJOR_VERSION).$(MINOR_VERSION)
 
 TEEC_SRCS	:= tee_client_api.c \
-		   teec_trace.c
+		   teec_trace.c \
+			 afl_call.c \
+			 test_case_logger.c
 ifeq ($(CFG_TEE_BENCHMARK),y)
 TEEC_SRCS	+= teec_benchmark.c
 endif
@@ -31,6 +33,8 @@ TEEC_INCLUDES 	:= \
 TEEC_CFLAGS	:= $(addprefix -I, $(TEEC_INCLUDES)) $(CFLAGS) -D_GNU_SOURCE \
 		   -DDEBUGLEVEL_$(CFG_TEE_CLIENT_LOG_LEVEL) \
 		   -DBINARY_PREFIX=\"TEEC\"
+#			 -DSYSCASE_LOGGER=1 \
+#			 -DSYSCASE_DEBUG=1
 
 ifeq ($(CFG_TEE_BENCHMARK),y)
 TEEC_CFLAGS	+= -DCFG_TEE_BENCHMARK

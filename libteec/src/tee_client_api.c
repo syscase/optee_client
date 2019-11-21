@@ -48,6 +48,10 @@
 
 #include "teec_benchmark.h"
 
+#ifdef SYSCASE_LOGGER
+#include "test_case_logger.h"
+#endif
+
 /* How many device sequence numbers will be tried before giving up */
 #define TEEC_MAX_DEV_SEQ	10
 
@@ -508,6 +512,10 @@ TEEC_Result TEEC_OpenSession(TEEC_Context *ctx, TEEC_Session *session,
 	arg->num_params = TEEC_CONFIG_PAYLOAD_REF_COUNT;
 	params = (struct tee_ioctl_param *)(arg + 1);
 
+#ifdef SYSCASE_LOGGER
+  memcpy(&last_uuid, destination, sizeof(last_uuid));
+#endif
+
 	uuid_to_octets(arg->uuid, destination);
 	arg->clnt_login = connection_method;
 
@@ -587,6 +595,11 @@ TEEC_Result TEEC_InvokeCommand(TEEC_Session *session, uint32_t cmd_id,
 
 	if (operation) {
 		teec_mutex_lock(&teec_mutex);
+
+#ifdef SYSCASE_LOGGER
+    log_test_case(&last_uuid, cmd_id, operation);
+#endif
+
 		operation->session = session;
 		teec_mutex_unlock(&teec_mutex);
 	}
